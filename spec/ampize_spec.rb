@@ -38,6 +38,12 @@ describe Ampize::Ampize do
     expect(r).to eq '<amp-img src="./spec/data/rect.jpg" width="50" height="50" layout="responsive"></amp-img>'
   end
 
+  it 'replace message whenc failed to fetch image.' do
+    ampize = Ampize::Ampize.new()
+    r = ampize.transform('<img src="notexists.jpg"/>')
+    expect(r).to eq %q|'notexists.jpg' is not found.|
+  end
+
   it 'can specify layout' do
     ampize = Ampize::Ampize.new({image_layout:'fixed'})
     r = ampize.transform('<img src="./spec/data/rect.jpg" width="50" height="50" />')

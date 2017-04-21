@@ -7,8 +7,12 @@ require 'nokogiri'
 module Ampize
   class Ampize
     def initialize(options={})
+      default_error_callback = Proc.new do |src|
+        %Q|'#{src}' is not found.|
+      end
       @options = {
-        image_layout: 'responsive'
+        image_layout: 'responsive',
+        image_fetch_error_callback: default_error_callback
       }
       @options.merge!(options)
     end
@@ -32,16 +36,24 @@ module Ampize
         width = tag.attributes['width']
         height = tag.attributes['height']
         if !width || !height
-          fi = FastImage.new(src, {raise_on_failure: true})
           size = FastImage.size(src)
-          width = size[0]
-          height = size[1]
+          if size.nil?
+            width = nil
+            height = nil
+          else
+            width = size[0]
+            height = size[1]
+          end
         else
           width = width.value.to_s
           height = height.value.to_s
         end
-        aimg = %Q|<amp-img src="#{src}" width="#{width}" height="#{height}" layout="#{@options[:image_layout]}"></amp-img>|
-        tag.replace(aimg)
+        if width && height
+          aimg = %Q|<amp-img src="#{src}" width="#{width}" height="#{height}" layout="#{@options[:image_layout]}"></amp-img>|
+          tag.replace(aimg)
+        else
+          tag.replace(@options[:image_fetch_error_callback].call(src))
+        end
       end
       %W|onload onerror onblur onchange onclick ondblclick onfocus
        onkeydown onkeypress onkeyup onmousedown onmouseup onreset
