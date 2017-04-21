@@ -19,18 +19,36 @@ module Ampize
 
     def transform(html)
       doc = Nokogiri::HTML.parse(html)
+      process_prohibited_tags doc
+      process_anchor doc
+      process_style doc
+      process_img doc
+      process_event doc
+      doc.at('body').children.to_s
+    end
+
+    def process_prohibited_tags(doc)
       prohibit_tags = %W|script frame frameset object param applet embed|
       prohibit_tags.each do |ptag|
         doc.search("//#{ptag}").remove
       end
+    end
+
+    def process_anchor(doc)
       doc.search('//a[@href]').each do |tag|
           if tag['href'] =~ /javascript/i
               tag.attributes['href'].remove
           end
       end
+    end
+
+    def process_style(doc)
       doc.search('//*[@style]').each do |tag|
         tag.attributes['style'].remove
       end
+    end
+
+    def process_img(doc)
       doc.search('//img').each do |tag|
         src = tag.attributes['src'].value
         width = tag.attributes['width']
@@ -55,13 +73,16 @@ module Ampize
           tag.replace(@options[:image_fetch_error_callback].call(src))
         end
       end
+    end
+
+    def process_event(doc)
       %W|onload onerror onblur onchange onclick ondblclick onfocus
        onkeydown onkeypress onkeyup onmousedown onmouseup onreset
        onselect onsubmit onunload|.each do |attr|
           doc.xpath('//@' + attr).remove
       end
-      doc.at('body').children.to_s
     end
+
   end
 end
 
