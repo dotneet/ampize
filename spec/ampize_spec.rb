@@ -1,26 +1,7 @@
 require 'spec_helper'
-require 'webrick'
 require 'ampize'
 
 describe Ampize::Ampize do
-  before :all do
-    require 'webrick'
-    @server_thread = Thread.new do
-      srv = WEBrick::HTTPServer.new({
-        DocumentRoot: './',
-        Port: 10021,
-        StartCallback: Proc.new { Thread.main.wakeup } 
-      })
-      Signal.trap(:INT) { srv.shutdown }
-      srv.start
-    end
-    Thread.stop
-  end
-
-  after :all do
-    Process.kill(:INT, Process.pid)
-    @server_thread.join
-  end
 
   it 'has a version number' do
     expect(Ampize::VERSION).not_to be nil
