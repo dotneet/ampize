@@ -27,6 +27,12 @@ puts result
 >> <amp-img src="./spec/data/rect.jpg" width="100" height="100" layout="responsive"></amp-img>
 ```
 
+If img element doesn't have width/height attributes then Ampize download an image to get a dimension.
+Ofcourse if img element have a size Ampize keep it.
+
+Currently Ampize doesn't support amp-audio, amp-video, amp-iframe.
+Contribution is always welcome.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/dotneet/ampize.
