@@ -13,7 +13,8 @@ module Ampize
       @options = {
         image_layout: 'responsive',
         image_fetch_error_callback: default_error_callback,
-        iframe_layout: 'responsive'
+        iframe_layout: 'responsive',
+        iframe_sandbox: 'allow-scripts'
       }
       @options.merge!(options)
     end
@@ -92,11 +93,13 @@ module Ampize
           width = width.value.to_s
           height = height.value.to_s
         end
-        if width && height
-          aiframe = %Q|<amp-iframe src="#{src}" width="#{width}" height="#{height}" layout="#{@options[:iframe_layout]}"></amp-layout>|
-          tag.replace(aiframe)
+        invalid = !(src.index('https') == 0)
+        if invalid
+          ch = '<div>' + tag.children.to_xml + '</div>'
+          tag.replace(ch)
         else
-          tag.replace(@options[:image_fetch_error_callback].call(src))
+          aiframe = %Q|<amp-iframe src="#{src}" width="#{width}" height="#{height}" layout="#{@options[:iframe_layout]}" sandbox="#{@options[:iframe_sandbox]}"></amp-layout>|
+          tag.replace(aiframe)
         end
       end
     end

@@ -45,14 +45,21 @@ describe Ampize::Ampize do
 
   it 'replace iframe to amp-iframe' do
     ampize = Ampize::Ampize.new()
-    r = ampize.transform('<iframe src="hoge"></iframe>')
-    expect(r).to eq '<amp-iframe src="hoge" width="400" height="300" layout="responsive"></amp-iframe>'
+    r = ampize.transform('<iframe src="https://localhost"></iframe>')
+    expect(r).to eq '<amp-iframe src="https://localhost" width="400" height="300" layout="responsive" sandbox="allow-scripts"></amp-iframe>'
   end
   
   it 'retain iframe size' do
     ampize = Ampize::Ampize.new()
-    r = ampize.transform('<iframe src="hoge" width="100" height="100"></iframe>')
-    expect(r).to eq '<amp-iframe src="hoge" width="100" height="100" layout="responsive"></amp-iframe>'
+    r = ampize.transform('<iframe src="https://localhost" width="100" height="100"></iframe>')
+    expect(r).to eq '<amp-iframe src="https://localhost" width="100" height="100" layout="responsive" sandbox="allow-scripts"></amp-iframe>'
+  end
+
+  it 'replace invalid iframe with iframe\'s children' do
+    ampize = Ampize::Ampize.new()
+    # amp-iframe supports https only.
+    r = ampize.transform('<iframe src="http://localhost/" width="100" height="100"><a href="foo">link</a></iframe>')
+    expect(r).to eq '<div><a href="foo">link</a></div>'
   end
 
   it 'removes style attributes' do
