@@ -43,6 +43,18 @@ describe Ampize::Ampize do
     expect(r).to eq '<amp-img src="./spec/data/rect.jpg" width="50" height="50" layout="fixed"></amp-img>'
   end
 
+  it 'replace iframe to amp-iframe' do
+    ampize = Ampize::Ampize.new()
+    r = ampize.transform('<iframe src="hoge"></iframe>')
+    expect(r).to eq '<amp-iframe src="hoge" width="400" height="300" layout="responsive"></amp-iframe>'
+  end
+  
+  it 'retain iframe size' do
+    ampize = Ampize::Ampize.new()
+    r = ampize.transform('<iframe src="hoge" width="100" height="100"></iframe>')
+    expect(r).to eq '<amp-iframe src="hoge" width="100" height="100" layout="responsive"></amp-iframe>'
+  end
+
   it 'removes style attributes' do
     ampize = Ampize::Ampize.new()
     r = ampize.transform('<p style="color:red;">text</p>')

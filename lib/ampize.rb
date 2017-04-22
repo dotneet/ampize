@@ -12,7 +12,8 @@ module Ampize
       end
       @options = {
         image_layout: 'responsive',
-        image_fetch_error_callback: default_error_callback
+        image_fetch_error_callback: default_error_callback,
+        iframe_layout: 'responsive'
       }
       @options.merge!(options)
     end
@@ -26,6 +27,7 @@ module Ampize
       process_anchor doc
       process_style doc
       process_img doc
+      process_iframe doc
       process_event doc
       doc.at('body').children.to_s
     end
@@ -72,6 +74,27 @@ module Ampize
         if width && height
           aimg = %Q|<amp-img src="#{src}" width="#{width}" height="#{height}" layout="#{@options[:image_layout]}"></amp-img>|
           tag.replace(aimg)
+        else
+          tag.replace(@options[:image_fetch_error_callback].call(src))
+        end
+      end
+    end
+    
+    def process_iframe(doc)
+      doc.search('//iframe').each do |tag|
+        src = tag.attributes['src'].value
+        width = tag.attributes['width']
+        height = tag.attributes['height']
+        if !width || !height
+          width = 400
+          height = 300
+        else
+          width = width.value.to_s
+          height = height.value.to_s
+        end
+        if width && height
+          aiframe = %Q|<amp-iframe src="#{src}" width="#{width}" height="#{height}" layout="#{@options[:iframe_layout]}"></amp-layout>|
+          tag.replace(aiframe)
         else
           tag.replace(@options[:image_fetch_error_callback].call(src))
         end
