@@ -7,6 +7,18 @@ describe Ampize::Ampize do
     expect(Ampize::VERSION).not_to be nil
   end
 
+  it 'return empty string when input empty string' do
+    ampize = Ampize::Ampize.new()
+    r = ampize.transform('')
+    expect(r).to eq ''
+  end
+
+  it 'return empty string when input null' do
+    ampize = Ampize::Ampize.new()
+    r = ampize.transform(nil)
+    expect(r).to eq ''
+  end
+
   it 'transforms img to amp-img' do
     ampize = Ampize::Ampize.new()
     r = ampize.transform('<img src="./spec/data/rect.jpg" />')

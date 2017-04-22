@@ -18,6 +18,9 @@ module Ampize
     end
 
     def transform(html)
+      if html.nil? || html.size == 0
+        return ''
+      end
       doc = Nokogiri::HTML.parse(html)
       process_prohibited_tags doc
       process_anchor doc
