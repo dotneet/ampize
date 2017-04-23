@@ -1,6 +1,8 @@
 # Ampize
 
-ampize replaces tags to AMP specific tags and removes prohibited tags and attributes.
+Ampize replaces tags to AMP specific tags and removes prohibited tags and attributes.  
+If img tag doesn't explictly specify a size Ampize download a source image and set a size to amp-img tag automatically.
+
 
 ## Installation
 
@@ -30,8 +32,8 @@ puts result
 If img element doesn't have width/height attributes then Ampize download an image to get a dimension.
 Ofcourse if img element have a size Ampize keep it.
 
-Currently Ampize doesn't support amp-audio, amp-video, amp-iframe.
-Contribution is always welcome.
+Currently Ampize doesn't support amp-audio, amp-video.
+Your contribution is always welcome.
 
 ## Contributing
 
